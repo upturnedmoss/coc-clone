@@ -1,0 +1,110 @@
+import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Constants
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+FPS = 30
+
+# Colors
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+
+# Player Class
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.resources = 1000
+        self.troops = 0
+        self.buildings = {
+            "Barracks": 0,
+            "Gold Mine": 0,
+            "Elixir Collector": 0
+        }
+
+    def build(self, building_type):
+        cost = {
+            "Barracks": 500,
+            "Gold Mine": 300,
+            "Elixir Collector": 300
+        }
+        if building_type in cost and self.resources >= cost[building_type]:
+            self.resources -= cost[building_type]
+            self.buildings[building_type] += 1
+            print(f"{self.name} built a {building_type}!")
+        else:
+            print("Not enough resources to build!")
+
+    def collect_resources(self):
+        for building in self.buildings:
+            if building == "Gold Mine":
+                self.resources += self.buildings[building] * 10
+            elif building == "Elixir Collector":
+                self.resources += self.buildings[building] * 10
+        print(f"{self.name} collected resources! Total resources: {self.resources}")
+
+    def train_troops(self, number):
+        cost = number * 100
+        if self.resources >= cost:
+            self.resources -= cost
+            self.troops += number
+            print(f"{self.name} trained {number} troops!")
+        else:
+            print("Not enough resources to train troops!")
+
+    def show_status(self):
+        print(f"{self.name}'s Status:")
+        print(f"Resources: {self.resources}")
+        print(f"Troops: {self.troops}")
+        print(f"Buildings: {self.buildings}")
+
+# Game Loop
+def main():
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Simple Clash of Clans-like Game")
+    clock = pygame.time.Clock()
+
+    player_name = input("Enter your player name: ")
+    player = Player(player_name)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                if build_barracks_button.collidepoint(mouse_pos):
+                    player.build("Barracks")
+                elif build_gold_mine_button.collidepoint(mouse_pos):
+                    player.build("Gold Mine")
+                elif collect_resources_button.collidepoint(mouse_pos):
+                    player.collect_resources()
+                elif train_troops_button.collidepoint(mouse_pos):
+                    number_of_troops = 1  # For simplicity, train 1 troop
+                    player.train_troops(number_of_troops)
+
+        screen.fill(WHITE)
+
+        # Display player status
+        font = pygame.font.Font(None, 36)
+        status_text = f"Resources: {player.resources} | Troops: {player.troops}"
+        text = font.render(status_text, True, GREEN)
+        screen.blit(text, (20, 20))
+
+        # Simple buttons for actions
+        global build_barracks_button, build_gold_mine_button, collect_resources_button, train_troops_button
+        build_barracks_button = pygame.draw.rect(screen, RED, (20, 60, 200, 50))
+        build_gold_mine_button = pygame.draw.rect(screen, RED, (20, 120, 200, 50))
+        collect_resources_button = pygame.draw.rect(screen, RED, (20, 180, 200, 50))
+        train_troops_button = pygame.draw.rect(screen, RED, (20, 240, 200, 50))
+
+        # Button labels
+        build_barracks_label = font.render("Build Barracks", True, WHITE)
+        screen.blit(build_barracks_label, (30, 70))
+        build_gold_mine_label = font
